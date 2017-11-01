@@ -6,5 +6,6 @@ public class Primary {
 		};
 		
 		Scheduler scheduler = new Scheduler( inputData );
+		System.out.println();
 	}
 }

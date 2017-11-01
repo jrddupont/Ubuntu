@@ -7,5 +7,6 @@ public class Scheduler {
 	
 	Scheduler( Process[] processes ){
 		this.processes = processes;
+		System.out.println();
 	}
 }
