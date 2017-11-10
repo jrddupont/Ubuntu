@@ -1,3 +1,4 @@
+package utils;
 import java.util.ArrayList;
 
 import bursts.Burst;
@@ -10,12 +11,12 @@ public class Driver {
 		ArrayList<Burst> p1Bursts = new ArrayList<Burst>();
 		p1Bursts.add(new CPUBurst(3));
 		p1Bursts.add(new IOBurst(14));
-		p1Bursts.add(new CPUBurst(3, 2, 2));
+		p1Bursts.add(new CPUBurst(3, 2, 2, 1));
 		
 		ArrayList<Burst> p2Bursts = new ArrayList<Burst>();
 		p2Bursts.add(new CPUBurst(5));
 		p2Bursts.add(new IOBurst(7));
-		p2Bursts.add(new CPUBurst(1, 2, 1));
+		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
 		
 		ArrayList<Burst> p3Bursts = new ArrayList<Burst>();
 		p3Bursts.add(new CPUBurst(6));

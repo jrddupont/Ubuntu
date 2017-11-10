@@ -1,3 +1,4 @@
+package utils;
 import java.util.ArrayList;
 
 public class MemoryManager {
@@ -26,7 +27,10 @@ public class MemoryManager {
 				swapIn(FrameTable.get(i));
 			}
 		}
-		p.age++;
+		p.step();
+		if(p.isDone()){ // TODO
+			
+		}
 	}
 	
 	public static boolean hasSpace( int memoryToStore ){
