@@ -1,14 +1,22 @@
 package utils;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class ProcessSynchronizer {
-	private static HashMap<Integer, Boolean> mutex = new HashMap<Integer, Boolean>();
+	private static ArrayList<Integer> locks = new ArrayList<Integer>();
+	
 	public ProcessSynchronizer(){
 	
 	}
 	
-	public static boolean isInCritical(int processID){
-		return false;
+	public static boolean lock(int resource){
+		if(locks.contains(resource)){
+			return false;
+		}
+		locks.add(resource);
+		return true;
+	}
+	public static void signal(int i){
+		locks.remove(i);
 	}
 }

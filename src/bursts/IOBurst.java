@@ -9,8 +9,4 @@ public class IOBurst extends Burst{
 	public int getEstimatedTime(){
 		return burst;
 	}
-	@Override
-	public int[] getBurstState(){
-		return new int[getEstimatedTime()];
-	}
 }

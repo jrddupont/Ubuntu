@@ -7,13 +7,13 @@ public class CPUBurst extends Burst{
 	private int startBurst = 0;
 	private int csBurst = 0;
 	private int endBurst = 0;
-	private int csID;
+	private int resource;
 	public CPUBurst(int start, int cs, int end, int csID){
 		startBurst = start;
 		csBurst = cs;
 		endBurst = end;
 		hasCS = true;
-		this.csID = csID;
+		this.resource = csID;
 	}
 	public CPUBurst(int burst){
 		startBurst = burst;
@@ -23,17 +23,16 @@ public class CPUBurst extends Burst{
 	public int getEstimatedTime(){
 		return startBurst + csBurst + endBurst;
 	}
-	@Override
-	public int[] getBurstState(){
-		int[] output = new int[getEstimatedTime()];
-		for(int i = 0; i < output.length; i++){
-			output[i] = Process.CPU;
+	public boolean hasCS(){
+		return hasCS;
+	}
+	public int getResource(){
+		return resource;
+	}
+	public int getCurrentState(int currentTotal) {
+		if(currentTotal >= startBurst && currentTotal < startBurst + csBurst){
+			return Process.CS;
 		}
-		if(hasCS){
-			for(int i = startBurst; i < startBurst + csBurst; i++){
-				output[i] = Process.CS;
-			}
-		}
-		return output;
+		return Process.CPU;
 	}
 }
