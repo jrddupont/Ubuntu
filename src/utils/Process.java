@@ -37,9 +37,9 @@ public class Process {
 	
 	public void step(){
 		runtime++;
-		if(processState[runtime] == CS){
+		//if(processState[runtime] == CS){
 			
-		}
+		//}
 	}
 	
 	public int getRuntime(){
