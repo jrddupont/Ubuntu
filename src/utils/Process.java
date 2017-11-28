@@ -1,8 +1,5 @@
 package utils;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.w3c.dom.ls.LSException;
 
 import bursts.Burst;
 import bursts.CPUBurst;
@@ -79,6 +76,7 @@ public class Process {
 		}else if(lastState == CS && newState != CS){
 			ProcessSynchronizer.signal(((CPUBurst)getCurrentBurst()).getResource());
 		}
+
 	}
 	
 	public int getRuntime(){
