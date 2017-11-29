@@ -5,10 +5,6 @@ import java.util.ArrayList;
 public class ProcessSynchronizer {
 	private static ArrayList<Integer> locks = new ArrayList<Integer>();
 	
-	public ProcessSynchronizer(){
-	
-	}
-	
 	public static boolean lock(int resource){
 		if(locks.contains(resource)){
 			return false;

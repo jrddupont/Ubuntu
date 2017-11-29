@@ -68,11 +68,15 @@ public class Process {
 	}
 	
 	private int lastState = CPU;
-	public void step(){
+	public void step() throws Exception{
 		runtime++;
 		int newState = getCurrentState();
 		if(newState == CS && newState != lastState){
-			ProcessSynchronizer.lock(((CPUBurst)getCurrentBurst()).getResource());
+			boolean response = ProcessSynchronizer.lock(((CPUBurst)getCurrentBurst()).getResource());
+			if(!response){
+				runtime--;
+				throw new SharedResourceException("Can't step into CS, resource is locked");
+			}
 		}else if(lastState == CS && newState != CS){
 			ProcessSynchronizer.signal(((CPUBurst)getCurrentBurst()).getResource());
 		}
@@ -90,4 +94,11 @@ public class Process {
 	public int getEstimatedTotalRuntime(){
 		return estimatedTotalRuntime;
 	}
+	
+	@SuppressWarnings("serial")
+	public class SharedResourceException extends Exception{
+	      public SharedResourceException(String message){
+	         super(message);
+	      }
+	 } 
 }
