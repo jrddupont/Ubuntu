@@ -1,5 +1,6 @@
 package utils;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import bursts.Burst;
 import bursts.CPUBurst;
@@ -25,7 +26,6 @@ public class Process {
 		for(Burst b : bursts){
 			estimatedTotalRuntime += b.getEstimatedTime();
 		}
-		
 	}
 	
 	public int getCurrentState(){
