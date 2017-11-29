@@ -27,7 +27,8 @@ public class Driver {
 				new Process(3, 32, p3Bursts),
 		};
 		
-		Scheduler schedule = new Scheduler( processes );
+		//Scheduler schedule = new Scheduler( processes );
+		Scheduler2 schedule = new Scheduler2( processes );
 		
 	}
 }

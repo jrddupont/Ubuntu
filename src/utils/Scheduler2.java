@@ -1,5 +1,6 @@
 package utils;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
@@ -11,7 +12,7 @@ public class Scheduler2 {
 	Process[] processes;
 	
 	//static TreeMap<Long, ArrayList<Process>> schedulingQueue = new TreeMap<Long, ArrayList<Process>>();
-	static TreeSet<TimePair> schedulingQueue = new TreeSet<TimePair>();
+	static TreeSet<TimePair> schedulingQueue;
 	
 	//Smallest time slice possible
 	static int minGranularity = 1;
@@ -22,19 +23,30 @@ public class Scheduler2 {
 	Scheduler2( Process[] processes ){
 		this.processes = processes;
 		
+		schedulingQueue = new TreeSet<TimePair>(new Comparator<TimePair>() {
+			@Override
+			public int compare(TimePair o1, TimePair o2) {
+				return (int) (o2.virtualRuntime - o1.virtualRuntime);
+			}
+		});
+		
 		//Store all processes by their "virtual runtime" aka total runtime they have had, which is probably 0 if they're new
 		for( int i = 0; i<this.processes.length; i++ ){
 			Process proc = this.processes[i];
 			TimePair tp = new TimePair(proc);
-			tp.virtualRuntime = getVirtualRuntime(proc); // Don't all processes start at 0?
-			schedulingQueue.add(new TimePair(proc));
+			//tp.virtualRuntime = getVirtualRuntime(proc); // Don't all processes start at 0?
+			schedulingQueue.add(tp);
 		}
 		
 		//TESTING RANDOM PROCESS STEPS
 		for (int i = 0; i < processes.length; i++) {
 			int num = (int) ( 3 + Math.random() * 10 );
 			for (int j = 0; j < num; j++) {
-				processes[i].step();
+				try {
+					processes[i].step();
+				} catch (Exception e) {
+					// TODO Prempt the process 
+				}
 			}
 		}
 		
@@ -105,11 +117,7 @@ public class Scheduler2 {
 	
 	//Get the next process to be run aka the one with lowest execution time
 	private Process getNextProcess(){
-		try{
-			return schedulingQueue.first().process;
-		} catch( NoSuchElementException e ){
-			return null;
-		}
+		return schedulingQueue.first().process;
 	}
 	
 	
