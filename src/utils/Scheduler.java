@@ -22,12 +22,7 @@ public class Scheduler {
 	Scheduler( Process[] processes ){
 		this.processes = processes;
 		
-		schedulingQueue = new TreeSet<TimePair>(new Comparator<TimePair>() {
-			@Override
-			public int compare(TimePair o1, TimePair o2) {
-				return (int) (o2.virtualRuntime - o1.virtualRuntime) + 1;
-			}
-		});
+		schedulingQueue = new TreeSet<TimePair>();
 		
 		//Store all processes by their "virtual runtime" aka total runtime they have had, which is probably 0 if they're new
 		for( int i = 0; i<this.processes.length; i++ ){
@@ -52,31 +47,29 @@ public class Scheduler {
 			TimePair currentTimePair = schedulingQueue.first();
 			
 			//Remove the process from the scheduling queue
-			schedulingQueue.remove( currentTimePair );
+			schedulingQueue.pollFirst();
+			
+			//AAAAAAAAAAAAAAAAHHHHHHHHHHH
+			if( currentProcess.isDone() ){
+				continue;
+			}
+			
 			
 			int timeSlice = getTimeSlice( currentProcess );
 			
-			System.out.println( "Process #" + currentProcess.id + " has started running" );
-			
+			System.out.println( "Process #" + currentProcess.id + " has started running with runtime of " + currentProcess.getRuntime() + " out of a total " + currentProcess.getEstimatedTotalRuntime() + " runtime" );
+			System.out.println( "Process #" + currentProcess.id + " has timeslice " + timeSlice );
 			//Execute this process' time slice
 			for( int i = 0; i < timeSlice; i++ ){
 				
-				System.out.println( currentProcess.getRuntime() );
-				
 				//Advance time and execute
 				try {
+					System.out.println( "Process #" + currentProcess.id + " has stepped step " + i );
 					MemoryManager.run( currentProcess );
 				} catch (SharedResourceException e) {
 					
 					//Can't advance time
 					System.out.println( "Process ID " + currentProcess.id + " could not run because access to critical section was locked" );
-					
-					//Update process' TimePair's Virtual Runtime
-					currentTimePair.virtualRuntime = getVirtualRuntime( currentProcess );
-					
-					//Insert TimePair into the scheduling queue
-					schedulingQueue.add( currentTimePair );
-					
 					
 					//Continue onto the next process in the queue
 					continue outerExecution;
@@ -84,15 +77,23 @@ public class Scheduler {
 				
 				//After we've finished stepping, check if we just finished
 				if( currentProcess.isDone() ){
-					System.out.println( "we're done" );
+					System.out.println( "Process #" + currentProcess.id + " is finished" );
 					//If we've finished, we need to deallocate this 
 					
 					MemoryManager.deallocate( currentProcess );
 					
 					//Continue onto the next process in the queue
-					return;
-					//continue outerExecution;
+					continue outerExecution;
 					
+				}else{
+					
+					//Update process' TimePair's Virtual Runtime
+					currentTimePair.virtualRuntime = getVirtualRuntime( currentProcess );
+					
+					System.out.println( "Process #" + currentProcess.id + " has loaded into the scheduling queue" );
+					
+					//Insert TimePair into the scheduling queue
+					schedulingQueue.add( currentTimePair );
 				}
 				
 			}
@@ -103,6 +104,8 @@ public class Scheduler {
 		
 		double nice = getNiceValue( process );
 		double totalNice = getTotalNice();
+		
+		System.out.println( "AAAAAAAAAAAAH " + (double) getPeriod() );
 		
 		double slice = getPeriod() * ( nice / totalNice );
 		
@@ -129,7 +132,9 @@ public class Scheduler {
 		
 		double virtualRuntime = ( (double) process.getRuntime() / (double) largestRuntime  );
 		
-		return virtualRuntime;
+		return process.getRuntime();
+		
+		//return virtualRuntime;
 	}
 	
 	
@@ -162,7 +167,7 @@ public class Scheduler {
 	}
 	
 	
-	private class TimePair{
+	private class TimePair implements Comparable<TimePair>{
 		public double virtualRuntime = 0;
 		public Process process;
 		public TimePair(Process p){
@@ -170,11 +175,12 @@ public class Scheduler {
 		}
 		
 		@Override
-		public boolean equals(Object o){
-			if(o instanceof Process){
-				return o == process;
+		public int compareTo( TimePair se ){
+			if( this.virtualRuntime == se.virtualRuntime ){
+				return 1;
 			}
-			return o == this;
+			
+			return (int) (this.virtualRuntime - se.virtualRuntime);
 		}
 	}
 }
