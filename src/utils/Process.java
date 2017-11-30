@@ -51,11 +51,11 @@ public class Process {
 		}
 		currentTotal = runtime - (currentTotal - cpub.getEstimatedTime());
 		return cpub.getCurrentState(currentTotal);
-		
 	}
 	
+	// Gets the burst that the process is currently in
 	private Burst getCurrentBurst(){
-		if(bursts.isEmpty()){
+		if(bursts.isEmpty()){	
 			return null;
 		}
 		int currentTotal = 0;
@@ -68,8 +68,9 @@ public class Process {
 		return null;
 	}
 	
+	// increments the runtime and if it steps into a CS that is locked, it will throw an error
 	private int lastState = CPU;
-	public void step() throws Exception{
+	public void step() throws SharedResourceException{
 		runtime++;
 		age++;
 		int newState = getCurrentState();
@@ -97,6 +98,7 @@ public class Process {
 		return estimatedTotalRuntime;
 	}
 	
+	// Custom exception for attempted CS access 
 	@SuppressWarnings("serial")
 	public class SharedResourceException extends Exception{
 	      public SharedResourceException(String message){

@@ -31,7 +31,7 @@ public class MemoryManager {
 				inMemory=true;
 				if(frame.pid==p.id) //if part of process is on disk
 				{
-					swapIn(frame);	
+					swap(frame);	
 				}
 			}
 		}
