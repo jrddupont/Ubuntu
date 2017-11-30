@@ -34,12 +34,7 @@ public class Scheduler {
 			Process proc = this.processes[i];
 			TimePair tp = new TimePair(proc);
 			//tp.virtualRuntime = i; // Don't all processes start at 0?
-			System.out.println( "ADDDDDING" );
 			schedulingQueue.add(tp);
-			System.out.println( schedulingQueue.size() );
-			for(TimePair tp2 : schedulingQueue){
-				System.out.println(tp2.virtualRuntime);
-			}
 		}
 		
 	}
@@ -61,13 +56,14 @@ public class Scheduler {
 			
 			int timeSlice = getTimeSlice( currentProcess );
 			
-			System.out.println( timeSlice );
+			System.out.println( "Process #" + currentProcess.id + " has started running" );
 			
 			//Execute this process' time slice
 			for( int i = 0; i < timeSlice; i++ ){
-				System.out.println( "Process #" + currentProcess.id + " has started running" );
 				
-				//Advance time
+				System.out.println( currentProcess.getRuntime() );
+				
+				//Advance time and execute
 				try {
 					MemoryManager.run( currentProcess );
 				} catch (SharedResourceException e) {
@@ -77,7 +73,6 @@ public class Scheduler {
 					
 					//Update process' TimePair's Virtual Runtime
 					currentTimePair.virtualRuntime = getVirtualRuntime( currentProcess );
-					
 					
 					//Insert TimePair into the scheduling queue
 					schedulingQueue.add( currentTimePair );
@@ -89,17 +84,18 @@ public class Scheduler {
 				
 				//After we've finished stepping, check if we just finished
 				if( currentProcess.isDone() ){
+					System.out.println( "we're done" );
 					//If we've finished, we need to deallocate this 
 					
 					MemoryManager.deallocate( currentProcess );
 					
 					//Continue onto the next process in the queue
-					continue outerExecution;
+					return;
+					//continue outerExecution;
 					
 				}
 				
 			}
-			
 		}
 	}
 	
@@ -107,9 +103,6 @@ public class Scheduler {
 		
 		double nice = getNiceValue( process );
 		double totalNice = getTotalNice();
-		
-		System.out.println( "nice " + nice );
-		System.out.println( "totalNice " + totalNice );
 		
 		double slice = getPeriod() * ( nice / totalNice );
 		
@@ -145,15 +138,11 @@ public class Scheduler {
 	//Also of note is that process priority = process ID
 	private int getNiceValue( Process process ){
 		int maxID = 0;
-		System.out.println( schedulingQueue.size() );
 		for( TimePair tp : schedulingQueue ){
-			System.out.println( "loooooop" );
 			if( tp.process.id > maxID ){
 				maxID = tp.process.id;
 			}
 		}
-		
-		System.out.println( "max" + maxID );
 		
 		return process.id - ( maxID + 1 );
 	}
