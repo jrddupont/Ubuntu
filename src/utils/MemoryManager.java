@@ -1,5 +1,7 @@
 package utils;
+
 import java.util.ArrayList;
+
 
 public class MemoryManager {
 	private static final byte MAIN=0;
@@ -18,18 +20,26 @@ public class MemoryManager {
 	private static ArrayList<Pages> PageTable = new ArrayList<Pages>();
 	private static ArrayList<Pages> FrameTable = new ArrayList<Pages>();
 	
-	public void run(Process p)
+	public void run(Process p) throws Exception
 	{
+		boolean inMemory = false;
 		for(int i=0;i<PageTable.size();i++)
 		{
-			if(FrameTable.get(i).pid==p.id) //if part of process is on disk
+			if(FrameTable.get(i).pid==p.id || PageTable.get(i).pid==p.id)
 			{
-				swapIn(FrameTable.get(i));
+				inMemory=true;
+				if(FrameTable.get(i).pid==p.id) //if part of process is on disk
+				{
+					swapIn(FrameTable.get(i));	
+				}
 			}
 		}
-		p.step();
-		if(p.isDone()){ // TODO
-			
+		if(!inMemory)
+		{
+			FrameTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
+			run(p);
+		}else{
+			p.step(); //increment process age
 		}
 	}
 	
@@ -58,7 +68,19 @@ public class MemoryManager {
 	}
 	private static void swapIn(Pages block)
 	{
-		
+		if(!hasSpace(block.pages*pageSize))
+		{
+			int temp=0;
+			for(int i=0;i<PageTable.size();i++)
+			{
+				if(FrameTable.get(i)==block)
+				{
+					
+				}
+				//need to swap out processes of biggest age until there's enough space
+			}
+		}
+		//handle the swap here
 	}
 	private static void swapOut(Pages block)
 	{
