@@ -1,9 +1,5 @@
 package utils;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import utils.Process.SharedResourceException;
@@ -23,7 +19,7 @@ public class Scheduler {
 	static int schedLatency = 1;
 
 	Scheduler( Process[] processes ){
-		this.processes = processes;
+		Scheduler.processes = processes;
 		
 		schedulingQueue = new TreeSet<TimePair>(new Comparator<TimePair>() {
 			@Override
@@ -33,19 +29,19 @@ public class Scheduler {
 		});
 		
 		//Store all processes by their "virtual runtime" aka total runtime they have had, which is probably 0 if they're new
-		for( int i = 0; i<this.processes.length; i++ ){
-			Process proc = this.processes[i];
+		for( int i = 0; i<Scheduler.processes.length; i++ ){
+			Process proc = Scheduler.processes[i];
 			TimePair tp = new TimePair(proc);
 			//tp.virtualRuntime = getVirtualRuntime(proc); // Don't all processes start at 0?
 			schedulingQueue.add(tp);
 		}
 		
 		//TESTING RANDOM PROCESS STEPS
-		for (int i = 0; i < processes.length; i++) {
+		for (int i = 0; i < Scheduler.processes.length; i++) {
 			int num = (int) ( 3 + Math.random() * 10 );
 			for (int j = 0; j < num; j++) {
 				try {
-					processes[i].step();
+					Scheduler.processes[i].step();
 				} catch (Exception e) {
 					// TODO Prempt the process 
 				}
