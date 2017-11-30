@@ -6,9 +6,10 @@ import utils.Process.SharedResourceException;
 
 
 public class MemoryManager {
+	public static Scheduler scheduler = null;
 	public static int pageSize;
 	public static int mainMemorySize;
-	private class Pages {
+	private static class Pages {
 		public int pid;
 		public int pages;
 		Pages(int id, int p)
@@ -23,17 +24,18 @@ public class MemoryManager {
 	public static void run(Process p) throws SharedResourceException
 	{
 		boolean inMemory = false;
-		for(int i=0;i<PageTable.size();i++)
+		for(Pages frame : FrameTable)
 		{
-			if(FrameTable.get(i).pid==p.id || PageTable.get(i).pid==p.id)
+			if(frame.pid==p.id)
 			{
 				inMemory=true;
-				if(FrameTable.get(i).pid==p.id) //if part of process is on disk
+				if(frame.pid==p.id) //if part of process is on disk
 				{
-					swapIn(FrameTable.get(i));	
+					swapIn(frame);	
 				}
 			}
 		}
+		for(Pages page : PageTable) if(page.pid==p.id) inMemory=true;
 		if(!inMemory)
 		{
 			FrameTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
@@ -50,13 +52,6 @@ public class MemoryManager {
 		}
 		return ((temp+((memoryToStore-1)/pageSize)+1)<=mainMemorySize);
 	}
-	
-	public int allocate( Process process ){
-		if(hasSpace(process.memory)) return 0;
-		PageTable.add(new Pages(process.id, ((process.memory-1)/pageSize)+1));
-		return ((process.memory-1)/pageSize)+1;
-	}
-	
 	public static void deallocate( Process process ){
 		for(int i=0;i<PageTable.size();i++)
 		{
@@ -66,24 +61,38 @@ public class MemoryManager {
 			}
 		}
 	}
-	private static void swapIn(Pages block)
+	private static void swap(Pages block)
 	{
 		if(!hasSpace(block.pages*pageSize))
 		{
-			int temp=0;
-			for(int i=0;i<PageTable.size();i++)
+			int count=block.pages;
+			do
 			{
-				if(FrameTable.get(i)==block)
+				Process minAge=null;
+				for(Process p : scheduler.processes)
 				{
-					
+					if(minAge==null || (p.age<minAge.age && minAge.id!=block.pid))
+					{
+						for(Pages pt : PageTable) if(pt.pid==p.id) minAge=p;
+					}
 				}
-				//need to swap out processes of biggest age until there's enough space
-			}
+				Pages oldPages = null;
+				for(Pages p : PageTable) if(p.pid==minAge.id) oldPages=p;
+				if(oldPages.pages>count)
+				{
+					FrameTable.add(oldPages);
+					oldPages.pages-=count;
+					count=0;
+				}else{
+					FrameTable.add(new Pages(oldPages.pid, oldPages.pages));
+					PageTable.remove(oldPages);
+					count-=oldPages.pages;
+				}//swap out processes of biggest age until there's enough space
+			}while(count>0);
+			
 		}
-		//handle the swap here
-	}
-	private static void swapOut(Pages block)
-	{
-		
+		//swap process in
+		FrameTable.remove(block);
+		PageTable.add(block);
 	}
 }

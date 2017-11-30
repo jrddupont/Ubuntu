@@ -15,6 +15,7 @@ public class Process {
 	public int id;
 	public int memory;
 	private int runtime = 0;
+	public int age = 0;
 	private int estimatedTotalRuntime = 0;
 	ArrayList<Burst> bursts = new ArrayList<Burst>();
 	
@@ -70,6 +71,7 @@ public class Process {
 	private int lastState = CPU;
 	public void step() throws Exception{
 		runtime++;
+		age++;
 		int newState = getCurrentState();
 		if(newState == CS && newState != lastState){
 			boolean response = ProcessSynchronizer.lock(((CPUBurst)getCurrentBurst()).getResource());
