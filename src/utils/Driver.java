@@ -28,7 +28,7 @@ public class Driver {
 		};
 		
 		//Scheduler schedule = new Scheduler( processes );
-		Scheduler2 schedule = new Scheduler2( processes );
+		Scheduler schedule = new Scheduler( processes );
 		
 	}
 }
