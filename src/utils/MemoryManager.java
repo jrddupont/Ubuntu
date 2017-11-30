@@ -19,14 +19,14 @@ public class MemoryManager {
 		}
 	}
 	private static ArrayList<Pages> PageTable = new ArrayList<Pages>();
-	private static ArrayList<Pages> FrameTable = new ArrayList<Pages>();
+	private static ArrayList<Pages> virtualPageTable = new ArrayList<Pages>();
 	
 	public static void run(Process p) throws SharedResourceException
 	{
 		boolean inMemory = false;
-		for(Iterator<Pages> frame = FrameTable.iterator(); frame.hasNext();) //swap pages back into memory if they are on disk
+		for(Iterator<Pages> virtualPage = virtualPageTable.iterator(); virtualPage.hasNext();) //swap pages back into memory if they are on disk
 		{
-			Pages block = frame.next();
+			Pages block = virtualPage.next();
 			if(block.pid==p.id)
 			{
 				inMemory=true;
@@ -47,11 +47,11 @@ public class MemoryManager {
 						for(Pages page : PageTable) if(page.pid==minAge.id) oldPages=page; //find first page owned by minAge
 						if(oldPages.pages>count)
 						{
-							FrameTable.add(oldPages);
+							virtualPageTable.add(oldPages);
 							oldPages.pages-=count;
 							count=0;
 						}else{
-							FrameTable.add(new Pages(oldPages.pid, oldPages.pages));
+							virtualPageTable.add(new Pages(oldPages.pid, oldPages.pages));
 							PageTable.remove(oldPages);
 							count-=oldPages.pages;
 						}//swap out processes of biggest age until there's enough space
@@ -59,14 +59,14 @@ public class MemoryManager {
 					}while(count>0);
 				}
 				//swap process in
-				frame.remove();
+				virtualPage.remove();
 				PageTable.add(block);
 			}
 		}
 		for(Pages page : PageTable) if(page.pid==p.id) inMemory=true; //check to see if the process exists
 		if(!inMemory) //process doesn't exist in memory yet
 		{
-			FrameTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
+			virtualPageTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
 			System.out.println("Process "+p.id+" loaded into memory");
 			run(p);
 		}else{
