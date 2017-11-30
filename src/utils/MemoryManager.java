@@ -2,10 +2,10 @@ package utils;
 
 import java.util.ArrayList;
 
+import utils.Process.SharedResourceException;
+
 
 public class MemoryManager {
-	private static final byte MAIN=0;
-	private static final byte DISK=1;
 	public static int pageSize;
 	public static int mainMemorySize;
 	private class Pages {
@@ -20,7 +20,7 @@ public class MemoryManager {
 	private static ArrayList<Pages> PageTable = new ArrayList<Pages>();
 	private static ArrayList<Pages> FrameTable = new ArrayList<Pages>();
 	
-	public void run(Process p) throws Exception
+	public static void run(Process p) throws SharedResourceException
 	{
 		boolean inMemory = false;
 		for(int i=0;i<PageTable.size();i++)
