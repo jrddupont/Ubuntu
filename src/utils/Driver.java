@@ -27,8 +27,12 @@ public class Driver {
 				new Process(3, 32, p3Bursts),
 		};
 		
+		MemoryManager.pageSize = 16;
+		MemoryManager.mainMemorySize=256;
 		Scheduler schedule = new Scheduler( processes );
 		MemoryManager.scheduler = schedule;
+		schedule.start();
+		
 	}
 }
 
