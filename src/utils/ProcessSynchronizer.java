@@ -12,7 +12,7 @@ public class ProcessSynchronizer {
 		locks.add(resource);
 		return true;
 	}
-	public static void signal(int i){
+	public static void signal(Integer i){
 		locks.remove(i);
 	}
 }

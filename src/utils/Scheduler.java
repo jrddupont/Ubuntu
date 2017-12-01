@@ -70,7 +70,7 @@ public class Scheduler {
 					try {
 						MemoryManager.run( currentTimePair.process );
 					} catch (SharedResourceException e) {
-
+						
 						//Can't advance time
 						System.out.print( "P" + currentTimePair.process.id + " prempted due to CS lock, " );
 

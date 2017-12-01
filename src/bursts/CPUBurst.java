@@ -3,7 +3,7 @@ package bursts;
 import utils.Process;
 
 public class CPUBurst extends Burst{
-	private boolean hasCS;
+	private boolean hasCS = false;
 	private int startBurst = 0;
 	private int csBurst = 0;
 	private int endBurst = 0;

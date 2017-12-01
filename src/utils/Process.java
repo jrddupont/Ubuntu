@@ -36,7 +36,7 @@ public class Process {
 		if(b instanceof IOBurst){
 			return IO;
 		}
-		if(b instanceof CPUBurst && ((CPUBurst) b).hasCS()){
+		if(b instanceof CPUBurst && !((CPUBurst) b).hasCS() ){
 			return CPU;
 		}
 		CPUBurst cpub = (CPUBurst) b;
@@ -48,7 +48,7 @@ public class Process {
 			currentTotal += curBurst.getEstimatedTime();
 			
 		}
-		currentTotal = runtime - (currentTotal - cpub.getEstimatedTime());
+		currentTotal = runtime - currentTotal;
 		return cpub.getCurrentState(currentTotal);
 	}
 	
@@ -84,7 +84,11 @@ public class Process {
 		}else if(lastState == CS && newState != CS){
 			ProcessSynchronizer.signal(((CPUBurst)getCurrentBurst()).getResource());
 		}
-
+		lastState = getCurrentState();
+	}
+	
+	public void addRuntime(int rt){
+		runtime += rt;
 	}
 	
 	public int getRuntime(){
