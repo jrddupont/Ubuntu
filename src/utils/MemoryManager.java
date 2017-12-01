@@ -9,6 +9,7 @@ public class MemoryManager {
 	public static Scheduler scheduler = null;
 	public static int pageSize;
 	public static int mainMemorySize;
+	private static int pCount=0;
 	private static class Pages {
 		public int pid;
 		public int pages;
@@ -24,6 +25,7 @@ public class MemoryManager {
 	public static void run(Process p) throws SharedResourceException
 	{
 		boolean inMemory = false;
+		ArrayList<Pages> tempVirtualPageTable = new ArrayList<Pages>();
 		for(Iterator<Pages> virtualPage = virtualPageTable.iterator(); virtualPage.hasNext();) //swap pages back into memory if they are on disk
 		{
 			Pages block = virtualPage.next();
@@ -32,7 +34,7 @@ public class MemoryManager {
 				inMemory=true;
 				if(!(freePages()>=block.pages))
 				{
-					int count=freePages()-block.pages; //pages needed to swap
+					int count=block.pages-freePages(); //pages needed to swap
 					do
 					{
 						Process minAge=null;
@@ -40,22 +42,23 @@ public class MemoryManager {
 						{
 							if(minAge==null || (process.age<minAge.age && minAge.id!=block.pid))
 							{
-								for(Pages pt : PageTable) if(pt.pid==process.id) minAge=p;
+								for(Pages pt : PageTable) if(pt.pid==process.id && pt.pid!=p.id) minAge=process;
 							}
 						}
 						Pages oldPages = null;
 						for(Pages page : PageTable) if(page.pid==minAge.id) oldPages=page; //find first page owned by minAge
-						if(oldPages.pages>count)
+						if(oldPages.pages>count) //Don't need to swap everything
 						{
-							virtualPageTable.add(oldPages);
+							System.out.print("Swapped "+count+" pages from process "+oldPages.pid+" out to disk, ");
+							tempVirtualPageTable.add(new Pages(oldPages.pid, count));
 							oldPages.pages-=count;
 							count=0;
-						}else{
-							virtualPageTable.add(new Pages(oldPages.pid, oldPages.pages));
+						}else{ //need to swap whole set of pages
+							System.out.print("Swapped "+oldPages.pages+" pages from process "+oldPages.pid+" out to disk, ");
+							tempVirtualPageTable.add(oldPages);
 							PageTable.remove(oldPages);
 							count-=oldPages.pages;
 						}//swap out processes of biggest age until there's enough space
-						System.out.print("Swapped "+oldPages.pages+" pages from process "+oldPages.pid+" out to disk, ");
 					}while(count>0);
 				}
 				//swap process in
@@ -63,9 +66,11 @@ public class MemoryManager {
 				PageTable.add(block);
 			}
 		}
+		for(Pages page : tempVirtualPageTable) virtualPageTable.add(page);
 		for(Pages page : PageTable) if(page.pid==p.id) inMemory=true; //check to see if the process exists
 		if(!inMemory) //process doesn't exist in memory yet
 		{
+			pCount++;
 			virtualPageTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
 			System.out.print("P"+p.id+" loaded into memory, ");
 			run(p);
@@ -88,14 +93,14 @@ public class MemoryManager {
 			{
 				PageTable.remove(i);
 			}
-			System.out.print("P"+process.id+" page removed from memory, ");
 		}
+		pCount--;
 	}
 
 	public static void printDebug() {
 		System.out.println("  Memory:");
-		System.out.println("    Loaded: " + "");
-		System.out.println("    Used space: " + "");
-		System.out.println("    Available space: " + "");
+		System.out.println("    Loaded: " + pCount+" Processes");
+		System.out.println("    Used space: " + ((mainMemorySize/pageSize)-freePages())+" pages");
+		System.out.println("    Available space: " +freePages()+ " pages");
 	}
 }
