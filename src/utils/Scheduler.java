@@ -33,7 +33,7 @@ public class Scheduler {
 			int num = (int) ( 3 + Math.random() * 10 );
 			for (int j = 0; j < num; j++) {
 				try {
-					Scheduler.processes[i].step();
+					//Scheduler.processes[i].step();
 				} catch (Exception e) {
 					// TODO Prempt the process 
 				}
@@ -69,7 +69,7 @@ public class Scheduler {
 				queue += "P" + tp.process.id + " ";
 			}
 			System.out.println( "\t" + "Scheduling queue contains: " + queue );
-			MemoryManager.printDebug();
+			//MemoryManager.printDebug();
 			
 			
 			for( int i = 0; i < timeSlice; i++ ){
