@@ -45,7 +45,7 @@ public class Scheduler {
 
 				//Execute this process' time slice
 				//Print info to console
-				System.out.println( "\n@time: " + Driver.globalTime );
+				System.out.println( "@time: " + Driver.globalTime );
 				System.out.println("  CPU: P" + currentTimePair.process.id + " running.");
 				String readyQueueString = "";
 				for(TimePair tp : schedulingQueue){
@@ -91,7 +91,6 @@ public class Scheduler {
 				
 				MemoryManager.printDebug();
 				
-				System.out.print("    Memory events: ");
 				//Remove the process from the scheduling queue
 				//We're doing it here so that nice values are handled properly.
 				schedulingQueue.pollFirst();
