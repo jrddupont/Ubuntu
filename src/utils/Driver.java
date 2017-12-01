@@ -13,7 +13,8 @@ public class Driver {
 		//run1();
 		//run2();
 		//run3();
-		run4();
+		//run4();
+		run5();
 	}
 	
 	public static void run1(){
@@ -153,6 +154,57 @@ public class Driver {
 		p5Bursts.add(new CPUBurst(15));
 		p5Bursts.add(new IOBurst(6));
 		p5Bursts.add(new CPUBurst(20));
+		
+		Process[] processes = {
+				new Process(1, 60, p1Bursts),
+				new Process(2, 300, p2Bursts),
+				new Process(3, 224, p3Bursts),
+				new Process(4, 80, p4Bursts),
+				new Process(5, 120, p5Bursts),
+		};
+		
+		MemoryManager.pageSize = 16;
+		MemoryManager.mainMemorySize = 512;
+		Scheduler schedule = new Scheduler( processes );
+		MemoryManager.scheduler = schedule;
+		schedule.start();
+	}
+	
+	public static void run5(){
+		ArrayList<Burst> p1Bursts = new ArrayList<Burst>();
+		p1Bursts.add(new CPUBurst(2, 4, 1, 1));
+		p1Bursts.add(new IOBurst(3));
+		p1Bursts.add(new CPUBurst(2, 3, 5, 1));
+		p1Bursts.add(new IOBurst(2));
+		p1Bursts.add(new CPUBurst(1, 6, 4, 1));
+		
+		ArrayList<Burst> p2Bursts = new ArrayList<Burst>();
+		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
+		p2Bursts.add(new IOBurst(3));
+		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
+		p2Bursts.add(new IOBurst(2));
+		p2Bursts.add(new CPUBurst(3, 4, 1, 1));
+		
+		ArrayList<Burst> p3Bursts = new ArrayList<Burst>();
+		p3Bursts.add(new CPUBurst(2, 4, 1, 1));
+		p3Bursts.add(new IOBurst(3));
+		p3Bursts.add(new CPUBurst(2, 3, 5, 1));
+		p3Bursts.add(new IOBurst(2));
+		p3Bursts.add(new CPUBurst(1, 6, 4, 1));
+		
+		ArrayList<Burst> p4Bursts = new ArrayList<Burst>();
+		p4Bursts.add(new CPUBurst(1, 2, 1, 1));
+		p4Bursts.add(new IOBurst(3));
+		p4Bursts.add(new CPUBurst(1, 2, 1, 1));
+		p4Bursts.add(new IOBurst(2));
+		p4Bursts.add(new CPUBurst(3, 4, 1, 1));
+		
+		ArrayList<Burst> p5Bursts = new ArrayList<Burst>();
+		p5Bursts.add(new CPUBurst(2, 4, 1, 1));
+		p5Bursts.add(new IOBurst(3));
+		p5Bursts.add(new CPUBurst(2, 3, 5, 1));
+		p5Bursts.add(new IOBurst(2));
+		p5Bursts.add(new CPUBurst(1, 6, 4, 1));
 		
 		Process[] processes = {
 				new Process(1, 60, p1Bursts),
