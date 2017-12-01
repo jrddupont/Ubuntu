@@ -70,6 +70,7 @@ public class Process {
 	// increments the runtime and if it steps into a CS that is locked, it will throw an error
 	private int lastState = CPU;
 	public void step() throws SharedResourceException{
+		lastState = getCurrentState();
 		runtime++;
 		age++;
 		Driver.globalTime++;
@@ -84,7 +85,7 @@ public class Process {
 		}else if(lastState == CS && newState != CS){
 			ProcessSynchronizer.signal(((CPUBurst)getCurrentBurst()).getResource());
 		}
-		lastState = getCurrentState();
+		
 	}
 	
 	public void addRuntime(int rt){

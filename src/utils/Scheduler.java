@@ -35,86 +35,84 @@ public class Scheduler {
 	public void start(){
 		//Primary execution loop
 		outerExecution: 
-			while( !schedulingQueue.isEmpty() ){
+		while( !schedulingQueue.isEmpty() ){
 
-				//Get the current process
-				//Also get the current process' TimePair
-				TimePair currentTimePair = schedulingQueue.first();
+			//Also get the current process' TimePair
+			TimePair currentTimePair = schedulingQueue.first();
 
-				int timeSlice = getTimeSlice( currentTimePair.process );
-
-				//Execute this process' time slice
-				//Print info to console
-				System.out.println( "@time: " + Driver.globalTime );
-				System.out.println("  CPU: P" + currentTimePair.process.id + " running.");
-				String readyQueueString = "";
-				for(TimePair tp : schedulingQueue){
-					if(tp == schedulingQueue.first()){
-						continue;
-					}
-					readyQueueString += "P" + tp.process.id + " ";
-				}
-				String doneProcessString = "";
+			//Execute this process' time slice
+			//Print info to console
+			System.out.println( "@time: " + Driver.globalTime );
+			System.out.println("  CPU: P" + currentTimePair.process.id + " running.");
+			System.out.print("    Ready queue: ");
+			for(TimePair tp : schedulingQueue){
+				System.out.print("P" + tp.process.id + " ");
+			}
+			System.out.println();
+			
+			if(doneProcesses.size() > 0){
+				System.out.print( "    Done processes: " );
 				for(TimePair tp : doneProcesses){
-					doneProcessString += "P" + tp.process.id + " ";
-				}
-				System.out.println( "    Ready queue: " + readyQueueString );
-				if(doneProcesses.size() > 0){
-					System.out.println( "    Done processes: " + doneProcessString );
-				}
-
-				System.out.print("    CPU events: ");
-				for( int i = 0; i < timeSlice; i++ ){
-
-					//Advance time and execute
-					try {
-						MemoryManager.run( currentTimePair.process );
-					} catch (SharedResourceException e) {
-						
-						//Can't advance time
-						System.out.print( "P" + currentTimePair.process.id + " prempted due to CS lock, " );
-
-						//Continue onto the next process in the queue
-						continue outerExecution;
-					}
-
-					//After we've finished stepping, check if we just finished so we can stop trying to step.
-					if( currentTimePair.process.isDone() ){
-						doneProcesses.add(currentTimePair);
-						System.out.print( "P" + currentTimePair.process.id + " finished, " );
-
-						//Break out of the timeslice for loop
-						break;
-					}
+					System.out.print("P" + tp.process.id + " ");
 				}
 				System.out.println();
-				
-				MemoryManager.printDebug();
-				
-				//Remove the process from the scheduling queue
-				//We're doing it here so that nice values are handled properly.
-				schedulingQueue.pollFirst();
+			}
+			
+			System.out.print("    CPU events: ");
 
-				if ( currentTimePair.process.isDone() ){
+			// Run for timeslice time
+			int timeSlice = getTimeSlice( currentTimePair.process );
+			for( int i = 0; i < timeSlice; i++ ){
+				//Advance time and execute
+				try {
+					MemoryManager.run( currentTimePair.process );
+				} catch (SharedResourceException e) {
 
-					//If we've finished, we need to deallocate this 
-					MemoryManager.deallocate( currentTimePair.process );
+					//Can't advance time
+					System.out.print( "P" + currentTimePair.process.id + " prempted due to CS lock, " );
 
-				}else{
-
-					//If the process is still "good" we should update the virtual runtime and add it back into the tree.
-
-					//Update process' TimePair's Virtual Runtime
-					currentTimePair.virtualRuntime = getVirtualRuntime( currentTimePair.process );
-
-					//Insert TimePair into the scheduling queue
-					schedulingQueue.add( currentTimePair );
-
+					// Go to the reinsertion phase
+					break;
 				}
-				System.out.println();
+
+				//After we've finished stepping, check if we just finished so we can stop trying to step.
+				if( currentTimePair.process.isDone() ){
+					System.out.print( "P" + currentTimePair.process.id + " finished, " );
+
+					//Break out of the timeslice for loop
+					break;
+				}
+			}
+			System.out.println();
+
+			MemoryManager.printDebug();
+
+			//Remove the process from the scheduling queue
+			//We're doing it here so that nice values are handled properly.
+			schedulingQueue.pollFirst();
+
+			if ( currentTimePair.process.isDone() ){
+
+				//If we've finished, we need to deallocate this 
+				MemoryManager.deallocate( currentTimePair.process );
+				doneProcesses.add(currentTimePair);
+
+			}else{
+
+				//If the process is still "good" we should update the virtual runtime and add it back into the tree.
+
+				//Update process' TimePair's Virtual Runtime
+				currentTimePair.virtualRuntime = getVirtualRuntime( currentTimePair.process );
+				currentTimePair.virtualRuntime += 100; 
 				
+				//Insert TimePair into the scheduling queue
+				schedulingQueue.add( currentTimePair );
 
 			}
+			System.out.println();
+
+
+		}
 	}
 
 	//How long a process runs for
@@ -125,13 +123,15 @@ public class Scheduler {
 
 		double slice = getPeriod() * ( nice / totalNice );
 
-		return (int) Math.ceil( slice );
+		return (int) Math.ceil( slice ); 
 	}
 
 
 	//Period of time in which all processes run once (hopefully but maybe not always)
 	private int getPeriod(){
-		return minGranularity * schedulingQueue.size();
+		int schedulingQueueSize = schedulingQueue.size() == 0 ? 1 : schedulingQueue.size(); 
+		return minGranularity * schedulingQueueSize;
+		
 	}
 
 	//Returns normalized runtime used in sorting schedulingQueue red/black tree
