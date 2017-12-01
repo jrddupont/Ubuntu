@@ -27,11 +27,11 @@ public class Driver {
 				System.out.println("***************************");
 				
 				switch(choice){
-					case 1: run1();
-					case 2: run2();
-					case 3: run3();
-					case 4: run4();
-					case 5: run5();
+					case 1: run1(); break;
+					case 2: run2(); break;
+					case 3: run3(); break;
+					case 4: run4(); break;
+					case 5: run5(); break;
 				}
 				
 				System.out.println("***************************");

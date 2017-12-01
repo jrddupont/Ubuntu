@@ -81,16 +81,14 @@ public class Process {
 			boolean response = ProcessSynchronizer.lock(((CPUBurst)getCurrentBurst()).getResource());
 			if(!response){
 				runtime--;
+				age--;
+				Driver.globalTime--;
 				throw new SharedResourceException("Can't step into CS, resource is locked");
 			}
 		}else if(lastState == CS && newState != CS){
 			ProcessSynchronizer.signal(((CPUBurst)getCurrentBurst()).getResource());
 		}
 		
-	}
-	
-	public void addRuntime(int rt){
-		runtime += rt;
 	}
 	
 	public int getRuntime(){
