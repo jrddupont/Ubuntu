@@ -32,12 +32,6 @@ public class Driver {
 				new Process(2, 32, p2Bursts),
 				new Process(3, 32, p3Bursts),
 		};
-		
-		int total = 0;
-		for(Process p : processes){
-			total += p.getEstimatedTotalRuntime();
-		}
-		System.out.println(total);
 		MemoryManager.pageSize = 16;
 		MemoryManager.mainMemorySize=256;
 		Scheduler schedule = new Scheduler( processes );
