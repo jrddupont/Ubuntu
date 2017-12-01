@@ -16,7 +16,7 @@ public class Driver {
 		while(true){
 			try{
 				System.out.println("Please choose a number between 1 and 5, inclusive: ");
-				int choice = scan.nextInt();
+				int choice = Integer.parseInt(scan.nextLine());
 				if(choice > 5 || choice < 1){
 					continue;
 				}
