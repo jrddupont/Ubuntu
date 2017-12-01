@@ -1,5 +1,4 @@
 package utils;
-import java.util.Comparator;
 import java.util.TreeSet;
 
 import utils.Process.SharedResourceException;
@@ -28,19 +27,7 @@ public class Scheduler {
 			schedulingQueue.add(tp);
 		}
 		
-		//TESTING RANDOM PROCESS STEPS
-		for (int i = 0; i < Scheduler.processes.length; i++) {
-			int num = (int) ( 3 + Math.random() * 10 );
-			for (int j = 0; j < num; j++) {
-				try {
-					Scheduler.processes[i].step();
-				} catch (Exception e) {
-					// TODO Prempt the process 
-				}
-			}
-		}
 		
-		System.out.println( getTimeSlice( getNextProcess() ) );
 	}
 	
 	//Actually start
@@ -63,13 +50,14 @@ public class Scheduler {
 			//Execute this process' time slice
 			
 			//Print info to console
-			System.out.println( "@time: " + Driver.globalTime + " process #" + currentProcess.id + " is running" );
+			System.out.println( "\n@time: " + Driver.globalTime );
+			System.out.println("\tCPU: P" + currentProcess.id + " running.");
 			String queue = "";
 			for(TimePair tp : schedulingQueue){
 				queue += "P" + tp.process.id + " ";
 			}
-			System.out.println( "\t" + "Scheduling queue contains: " + queue );
-			MemoryManager.printDebug();
+			System.out.println( "\t\tReady queue: " + queue );
+			//MemoryManager.printDebug();
 			
 			
 			for( int i = 0; i < timeSlice; i++ ){
@@ -80,7 +68,7 @@ public class Scheduler {
 				} catch (SharedResourceException e) {
 					
 					//Can't advance time
-					System.out.println( "Process ID " + currentProcess.id + " could not run because access to critical section was locked" );
+					System.out.println( "\t\tP" + currentProcess.id + " could not run because access to critical section was locked" );
 					
 					//Continue onto the next process in the queue
 					continue outerExecution;
@@ -88,7 +76,7 @@ public class Scheduler {
 				
 				//After we've finished stepping, check if we just finished so we can stop trying to step.
 				if( currentProcess.isDone() ){
-					System.out.println( "Process #" + currentProcess.id + " is finished" );
+					System.out.println( "\t\tP" + currentProcess.id + " is finished" );
 					
 					//Break out of the timeslice for loop
 					break;
