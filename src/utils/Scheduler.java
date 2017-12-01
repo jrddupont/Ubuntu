@@ -18,6 +18,13 @@ public class Scheduler {
 	static int minGranularity = 3;
 
 	Scheduler( Process[] processes ){
+		
+		int total = 0;
+		for(Process p : processes){
+			total += p.getEstimatedTotalRuntime();
+		}
+		System.out.println("Total runtime: " + total);
+		
 		Scheduler.processes = processes;
 
 		schedulingQueue = new TreeSet<TimePair>();
