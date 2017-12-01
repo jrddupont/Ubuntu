@@ -131,7 +131,7 @@ public class Driver {
 		ArrayList<Burst> p3Bursts = new ArrayList<Burst>();
 		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
 		p2Bursts.add(new IOBurst(3));
-		p2Bursts.add(new CPUBurst(1, 2, 1, 2));
+		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
 		p2Bursts.add(new IOBurst(2));
 		p2Bursts.add(new CPUBurst(5));
 		

@@ -18,13 +18,13 @@ public class Scheduler {
 	static int minGranularity = 3;
 
 	Scheduler( Process[] processes ){
-		
+
 		int total = 0;
 		for(Process p : processes){
 			total += p.getEstimatedTotalRuntime();
 		}
 		System.out.println("Total runtime: " + total);
-		
+
 		Scheduler.processes = processes;
 
 		schedulingQueue = new TreeSet<TimePair>();
@@ -42,7 +42,6 @@ public class Scheduler {
 	//Actually start
 	public void start(){
 		//Primary execution loop
-		outerExecution: 
 		while( !schedulingQueue.isEmpty() ){
 
 			//Also get the current process' TimePair
@@ -57,7 +56,7 @@ public class Scheduler {
 				System.out.print("P" + tp.process.id + " ");
 			}
 			System.out.println();
-			
+
 			if(doneProcesses.size() > 0){
 				System.out.print( "    Done processes: " );
 				for(TimePair tp : doneProcesses){
@@ -65,7 +64,7 @@ public class Scheduler {
 				}
 				System.out.println();
 			}
-			
+
 			System.out.print("    CPU events: ");
 
 			// Run for timeslice time
@@ -111,7 +110,7 @@ public class Scheduler {
 
 				//Update process' TimePair's Virtual Runtime
 				currentTimePair.virtualRuntime = getVirtualRuntime( currentTimePair.process );
-				
+
 				//Insert TimePair into the scheduling queue
 				schedulingQueue.add( currentTimePair );
 
@@ -120,6 +119,16 @@ public class Scheduler {
 
 
 		}
+		System.out.println( "@time: " + Driver.globalTime );
+		System.out.println("  CPU: All finished");
+		System.out.println("    Ready queue: -");
+		System.out.print( "    Done processes: " );
+		for(TimePair tp : doneProcesses){
+			System.out.print("P" + tp.process.id + " ");
+		}
+		System.out.println();
+		MemoryManager.printDebug();
+		System.out.println();
 	}
 
 	//How long a process runs for
@@ -138,7 +147,7 @@ public class Scheduler {
 	private int getPeriod(){
 		int schedulingQueueSize = schedulingQueue.size() == 0 ? 1 : schedulingQueue.size(); 
 		return minGranularity * schedulingQueueSize;
-		
+
 	}
 
 	//Returns normalized runtime used in sorting schedulingQueue red/black tree
