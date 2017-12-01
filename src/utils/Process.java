@@ -73,6 +73,8 @@ public class Process {
 	public void step() throws SharedResourceException{
 		runtime++;
 		age++;
+		Driver.globalTime++;
+		
 		int newState = getCurrentState();
 		if(newState == CS && newState != lastState){
 			boolean response = ProcessSynchronizer.lock(((CPUBurst)getCurrentBurst()).getResource());

@@ -7,6 +7,8 @@ import bursts.IOBurst;
 
 
 public class Driver {
+	public static int globalTime = 0;
+	
 	public static void main(String[] args){
 		ArrayList<Burst> p1Bursts = new ArrayList<Burst>();
 		p1Bursts.add(new CPUBurst(3));

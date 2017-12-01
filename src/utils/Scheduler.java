@@ -46,23 +46,27 @@ public class Scheduler {
 			//Also get the current process' TimePair
 			TimePair currentTimePair = schedulingQueue.first();
 			
-			//AAAAAAAAAAAAAAAAHHHHHHHHHHH
-			if( currentProcess.isDone() ){
-				continue;
-			}
-			
-			
 			int timeSlice = getTimeSlice( currentProcess );
 			
-			System.out.println( "Process #" + currentProcess.id + " has started running with runtime of " + currentProcess.getRuntime() + " out of a total " + currentProcess.getEstimatedTotalRuntime() + " runtime" );
-			System.out.println( "Process #" + currentProcess.id + " has timeslice " + timeSlice );
-			System.out.println( "There are currently " + schedulingQueue.size() + " items in the scheduling queue" );
+//			System.out.println( "Process #" + currentProcess.id + " has started running with runtime of " + currentProcess.getRuntime() + " out of a total " + currentProcess.getEstimatedTotalRuntime() + " runtime" );
+//			System.out.println( "Process #" + currentProcess.id + " has timeslice " + timeSlice );
+//			System.out.println( "There are currently " + schedulingQueue.size() + " items in the scheduling queue" );
 			//Execute this process' time slice
+			
+			//Print info to console
+			System.out.println( "@time: " + Driver.globalTime + " process #" + currentProcess.id + " is running" );
+			String queue = "";
+			for(TimePair tp : schedulingQueue){
+				queue += "P" + tp.process.id + " ";
+			}
+			System.out.println( "\t" + "Scheduling queue contains: " + queue );
+			MemoryManager.printDebug();
+			
+			
 			for( int i = 0; i < timeSlice; i++ ){
 				
 				//Advance time and execute
 				try {
-					System.out.println( "Process #" + currentProcess.id + " has stepped step " + i );
 					MemoryManager.run( currentProcess );
 				} catch (SharedResourceException e) {
 					
@@ -106,14 +110,11 @@ public class Scheduler {
 		}
 	}
 	
+	//How long a process runs for
 	private int getTimeSlice( Process process ){
-		
-		
 		
 		double nice = getNiceValue( process );
 		double totalNice = getTotalNice();
-		
-		System.out.println( "Process #" + process.id + " has a nice value of " + nice + " and a totalNice of " + totalNice + " with a period of " + getPeriod() );
 		
 		double slice = getPeriod() * ( nice / totalNice );
 		
