@@ -1,9 +1,5 @@
 package utils;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import utils.Process.SharedResourceException;
@@ -20,18 +16,31 @@ public class Scheduler {
 	static int minGranularity = 3;
 
 	Scheduler( Process[] processes ){
-		this.processes = processes;
+		Scheduler.processes = processes;
 		
 		schedulingQueue = new TreeSet<TimePair>();
 		
 		//Store all processes by their "virtual runtime" aka total runtime they have had, which is probably 0 if they're new
-		for( int i = 0; i<this.processes.length; i++ ){
-			Process proc = this.processes[i];
+		for( int i = 0; i<Scheduler.processes.length; i++ ){
+			Process proc = Scheduler.processes[i];
 			TimePair tp = new TimePair(proc);
 			//tp.virtualRuntime = i; // Don't all processes start at 0?
 			schedulingQueue.add(tp);
 		}
 		
+		//TESTING RANDOM PROCESS STEPS
+		for (int i = 0; i < Scheduler.processes.length; i++) {
+			int num = (int) ( 3 + Math.random() * 10 );
+			for (int j = 0; j < num; j++) {
+				try {
+					Scheduler.processes[i].step();
+				} catch (Exception e) {
+					// TODO Prempt the process 
+				}
+			}
+		}
+		
+		System.out.println( getTimeSlice( getNextProcess() ) );
 	}
 	
 	//Actually start
