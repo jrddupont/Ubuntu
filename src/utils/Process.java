@@ -13,6 +13,7 @@ public class Process {
 	public static final int DONE = 3;
 	public int id;
 	public int memory;
+	public int runtimeAdjust = 0;
 	private int runtime = 0;
 	public int age = 0;
 	private int estimatedTotalRuntime = 0;

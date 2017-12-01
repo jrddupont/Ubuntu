@@ -70,7 +70,7 @@ public class Scheduler {
 
 					//Can't advance time
 					System.out.print( "P" + currentTimePair.process.id + " prempted due to CS lock, " );
-
+					currentTimePair.process.runtimeAdjust += 4;
 					// Go to the reinsertion phase
 					break;
 				}
@@ -103,7 +103,6 @@ public class Scheduler {
 
 				//Update process' TimePair's Virtual Runtime
 				currentTimePair.virtualRuntime = getVirtualRuntime( currentTimePair.process );
-				currentTimePair.virtualRuntime += 100; 
 				
 				//Insert TimePair into the scheduling queue
 				schedulingQueue.add( currentTimePair );
@@ -148,7 +147,7 @@ public class Scheduler {
 		//		
 		//		double virtualRuntime = ( (double) process.getRuntime() / (double) largestRuntime  );
 
-		return process.getRuntime();
+		return process.getRuntime() + process.runtimeAdjust;
 
 		//return virtualRuntime;
 	}
