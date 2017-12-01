@@ -1,5 +1,6 @@
 package utils;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import bursts.Burst;
 import bursts.CPUBurst;
@@ -10,26 +11,39 @@ public class Driver {
 	public static int globalTime = 0;
 	
 	public static void main(String[] args){
-		System.out.println("***************************");
-		System.out.println("********Set 1 Begin********");
-		System.out.println("***************************");
-		run1();
-		System.out.println("***************************");
-		System.out.println("********Set 2 Begin********");
-		System.out.println("***************************");
-		run2();
-		System.out.println("***************************");
-		System.out.println("********Set 3 Begin********");
-		System.out.println("***************************");
-		run3();
-		System.out.println("***************************");
-		System.out.println("********Set 4 Begin********");
-		System.out.println("***************************");
-		run4();
-		System.out.println("***************************");
-		System.out.println("********Set 5 Begin********");
-		System.out.println("***************************");
-		run5();
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Hello, which set would you like to run? ");
+		while(true){
+			try{
+				System.out.println("Please choose a number between 1 and 5, inclusive: ");
+				int choice = scan.nextInt();
+				if(choice > 5 || choice < 1){
+					continue;
+				}
+				
+				System.out.println();
+				System.out.println("***************************");
+				System.out.println("********Set "+choice+" Begin********");
+				System.out.println("***************************");
+				
+				switch(choice){
+					case 1: run1();
+					case 2: run2();
+					case 3: run3();
+					case 4: run4();
+					case 5: run5();
+				}
+				
+				System.out.println("***************************");
+				System.out.println("********Set "+choice+" End**********");
+				System.out.println("***************************");
+				
+				break;
+				
+			}catch(Exception e){
+				continue;
+			}
+		}
 	}
 	
 	public static void run1(){
