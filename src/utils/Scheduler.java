@@ -2,6 +2,7 @@ package utils;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+import bursts.IOBurst;
 import utils.Process.SharedResourceException;
 
 
@@ -43,7 +44,7 @@ public class Scheduler {
 			//Execute this process' time slice
 			//Print info to console
 			System.out.println( "@time: " + Driver.globalTime );
-			System.out.println("  CPU: P" + currentTimePair.process.id + " running.");
+			System.out.println("  CPU: P" + currentTimePair.process.id + " running (" + (currentTimePair.process.getCurrentBurst() instanceof IOBurst ? "IO" : "CPU") + ")");
 			System.out.print("    Ready queue: ");
 			for(TimePair tp : schedulingQueue){
 				System.out.print("P" + tp.process.id + " ");

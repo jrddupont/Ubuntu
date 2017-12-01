@@ -54,7 +54,7 @@ public class Process {
 	}
 	
 	// Gets the burst that the process is currently in
-	private Burst getCurrentBurst(){
+	public Burst getCurrentBurst(){
 		if(bursts.isEmpty()){	
 			return null;
 		}
