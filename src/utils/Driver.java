@@ -10,10 +10,25 @@ public class Driver {
 	public static int globalTime = 0;
 	
 	public static void main(String[] args){
-		//run1();
-		//run2();
-		//run3();
-		//run4();
+		System.out.println("***************************");
+		System.out.println("********Set 1 Begin********");
+		System.out.println("***************************");
+		run1();
+		System.out.println("***************************");
+		System.out.println("********Set 2 Begin********");
+		System.out.println("***************************");
+		run2();
+		System.out.println("***************************");
+		System.out.println("********Set 3 Begin********");
+		System.out.println("***************************");
+		run3();
+		System.out.println("***************************");
+		System.out.println("********Set 4 Begin********");
+		System.out.println("***************************");
+		run4();
+		System.out.println("***************************");
+		System.out.println("********Set 5 Begin********");
+		System.out.println("***************************");
 		run5();
 	}
 	
