@@ -91,7 +91,7 @@ public class Scheduler {
 				
 				MemoryManager.printDebug();
 				
-				System.out.print("    Memory events:");
+				System.out.print("    Memory events: ");
 				//Remove the process from the scheduling queue
 				//We're doing it here so that nice values are handled properly.
 				schedulingQueue.pollFirst();
