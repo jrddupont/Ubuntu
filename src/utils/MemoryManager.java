@@ -36,7 +36,7 @@ public class MemoryManager {
 					do
 					{
 						Process minAge=null;
-						for(Process process : scheduler.processes) //find process of minimum age
+						for(Process process : Scheduler.processes) //find process of minimum age
 						{
 							if(minAge==null || (process.age<minAge.age && minAge.id!=block.pid))
 							{
@@ -55,7 +55,7 @@ public class MemoryManager {
 							PageTable.remove(oldPages);
 							count-=oldPages.pages;
 						}//swap out processes of biggest age until there's enough space
-						System.out.println("Swapped "+oldPages.pages+" pages from process "+oldPages.pid+" out to disk");
+						System.out.print("Swapped "+oldPages.pages+" pages from process "+oldPages.pid+" out to disk, ");
 					}while(count>0);
 				}
 				//swap process in
@@ -67,7 +67,7 @@ public class MemoryManager {
 		if(!inMemory) //process doesn't exist in memory yet
 		{
 			virtualPageTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
-			System.out.println("Process "+p.id+" loaded into memory");
+			System.out.print("P"+p.id+" loaded into memory, ");
 			run(p);
 		}else{
 			p.step(); //increment process age
@@ -88,7 +88,14 @@ public class MemoryManager {
 			{
 				PageTable.remove(i);
 			}
-			System.out.println("Removed process "+process.id+" from memory");
+			System.out.print("P"+process.id+" page removed from memory, ");
 		}
+	}
+
+	public static void printDebug() {
+		System.out.println("  Memory:");
+		System.out.println("    Loaded: " + "");
+		System.out.println("    Used space: " + "");
+		System.out.println("    Available space: " + "");
 	}
 }
