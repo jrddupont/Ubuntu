@@ -38,6 +38,7 @@ public class Driver {
 				System.out.println("********Set "+choice+" End**********");
 				System.out.println("***************************");
 				
+				scan.close();
 				break;
 				
 			}catch(Exception e){
@@ -129,11 +130,11 @@ public class Driver {
 		p2Bursts.add(new CPUBurst(3));
 		
 		ArrayList<Burst> p3Bursts = new ArrayList<Burst>();
-		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
-		p2Bursts.add(new IOBurst(3));
-		p2Bursts.add(new CPUBurst(1, 2, 1, 1));
-		p2Bursts.add(new IOBurst(2));
-		p2Bursts.add(new CPUBurst(5));
+		p3Bursts.add(new CPUBurst(1, 2, 1, 1));
+		p3Bursts.add(new IOBurst(3));
+		p3Bursts.add(new CPUBurst(1, 2, 1, 1));
+		p3Bursts.add(new IOBurst(2));
+		p3Bursts.add(new CPUBurst(5));
 		
 		ArrayList<Burst> p4Bursts = new ArrayList<Burst>();
 		p4Bursts.add(new CPUBurst(1, 3, 1, 2));
