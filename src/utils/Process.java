@@ -13,6 +13,7 @@ public class Process {
 	public static final int DONE = 3;
 	public int id;
 	public int memory;
+	public int runtimeAdjust = 0;
 	private int runtime = 0;
 	public int age = 0;
 	private int estimatedTotalRuntime = 0;
@@ -36,7 +37,7 @@ public class Process {
 		if(b instanceof IOBurst){
 			return IO;
 		}
-		if(b instanceof CPUBurst && ((CPUBurst) b).hasCS()){
+		if(b instanceof CPUBurst && !((CPUBurst) b).hasCS() ){
 			return CPU;
 		}
 		CPUBurst cpub = (CPUBurst) b;
@@ -48,12 +49,12 @@ public class Process {
 			currentTotal += curBurst.getEstimatedTime();
 			
 		}
-		currentTotal = runtime - (currentTotal - cpub.getEstimatedTime());
+		currentTotal = runtime - currentTotal;
 		return cpub.getCurrentState(currentTotal);
 	}
 	
 	// Gets the burst that the process is currently in
-	private Burst getCurrentBurst(){
+	public Burst getCurrentBurst(){
 		if(bursts.isEmpty()){	
 			return null;
 		}
@@ -70,6 +71,7 @@ public class Process {
 	// increments the runtime and if it steps into a CS that is locked, it will throw an error
 	private int lastState = CPU;
 	public void step() throws SharedResourceException{
+		lastState = getCurrentState();
 		runtime++;
 		age++;
 		Driver.globalTime++;
@@ -79,12 +81,14 @@ public class Process {
 			boolean response = ProcessSynchronizer.lock(((CPUBurst)getCurrentBurst()).getResource());
 			if(!response){
 				runtime--;
+				age--;
+				Driver.globalTime--;
 				throw new SharedResourceException("Can't step into CS, resource is locked");
 			}
 		}else if(lastState == CS && newState != CS){
 			ProcessSynchronizer.signal(((CPUBurst)getCurrentBurst()).getResource());
 		}
-
+		
 	}
 	
 	public int getRuntime(){

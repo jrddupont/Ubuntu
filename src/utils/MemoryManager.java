@@ -21,6 +21,7 @@ public class MemoryManager {
 	}
 	private static ArrayList<Pages> PageTable = new ArrayList<Pages>();
 	private static ArrayList<Pages> virtualPageTable = new ArrayList<Pages>();
+	private static int[] swaps = new int[20];
 	
 	public static void run(Process p) throws SharedResourceException
 	{
@@ -32,7 +33,7 @@ public class MemoryManager {
 			if(block.pid==p.id)
 			{
 				inMemory=true;
-				if(!(freePages()>=block.pages))
+				if(!(freePages()>=block.pages)) //not enough free frames in memory
 				{
 					int count=block.pages-freePages(); //pages needed to swap
 					do
@@ -49,12 +50,12 @@ public class MemoryManager {
 						for(Pages page : PageTable) if(page.pid==minAge.id) oldPages=page; //find first page owned by minAge
 						if(oldPages.pages>count) //Don't need to swap everything
 						{
-							System.out.print("Swapped "+count+" pages from process "+oldPages.pid+" out to disk, ");
+							swaps[oldPages.pid]+=count;
 							tempVirtualPageTable.add(new Pages(oldPages.pid, count));
 							oldPages.pages-=count;
 							count=0;
 						}else{ //need to swap whole set of pages
-							System.out.print("Swapped "+oldPages.pages+" pages from process "+oldPages.pid+" out to disk, ");
+							swaps[oldPages.pid]+=oldPages.pages;
 							tempVirtualPageTable.add(oldPages);
 							PageTable.remove(oldPages);
 							count-=oldPages.pages;
@@ -71,7 +72,7 @@ public class MemoryManager {
 		if(!inMemory) //process doesn't exist in memory yet
 		{
 			pCount++;
-			virtualPageTable.add(new Pages(p.id, (p.memory/pageSize)+1)); //give process memory for first time
+			virtualPageTable.add(new Pages(p.id, ((p.memory+(p.memory%pageSize)))/pageSize)); //give process memory for first time
 			System.out.print("P"+p.id+" loaded into memory, ");
 			run(p);
 		}else{
@@ -100,7 +101,13 @@ public class MemoryManager {
 	public static void printDebug() {
 		System.out.println("  Memory:");
 		System.out.println("    Loaded: " + pCount+" Processes");
-		System.out.println("    Used space: " + ((mainMemorySize/pageSize)-freePages())+" pages");
-		System.out.println("    Available space: " +freePages()+ " pages");
+		System.out.println("    Used space: " + (mainMemorySize-(pageSize*freePages())+"MB"));
+		System.out.println("    Available space: " +(pageSize*freePages())+ "MB");
+		System.out.println("    Memory events: ");
+		for(int i=1; i<swaps.length;i++)
+		{
+			if(swaps[i]>0) System.out.println("        Swapped "+swaps[i]+" pages from process "+i+" out to disk");
+		}
+		swaps = new int[20];
 	}
 }
