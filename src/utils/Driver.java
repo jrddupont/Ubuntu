@@ -168,9 +168,9 @@ public class Driver {
 		p2Bursts.add(new CPUBurst(3));
 		
 		ArrayList<Burst> p3Bursts = new ArrayList<Burst>();
-		p2Bursts.add(new CPUBurst(8));
-		p2Bursts.add(new IOBurst(6));
-		p2Bursts.add(new CPUBurst(10));
+		p3Bursts.add(new CPUBurst(8));
+		p3Bursts.add(new IOBurst(6));
+		p3Bursts.add(new CPUBurst(10));
 		
 		ArrayList<Burst> p4Bursts = new ArrayList<Burst>();
 		p4Bursts.add(new CPUBurst(1));

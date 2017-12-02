@@ -10,15 +10,6 @@ public class MemoryManager {
 	public static int pageSize;
 	public static int mainMemorySize;
 	private static int pCount=0;
-	private static class Pages {
-		public int pid;
-		public int pages;
-		Pages(int id, int p)
-		{
-			pid=id;
-			pages=p;
-		}
-	}
 	private static ArrayList<Pages> PageTable = new ArrayList<Pages>();
 	private static ArrayList<Pages> virtualPageTable = new ArrayList<Pages>();
 	private static int[] swaps = new int[20];
@@ -109,5 +100,15 @@ public class MemoryManager {
 			if(swaps[i]>0) System.out.println("        Swapped "+swaps[i]+" pages from process "+i+" out to disk");
 		}
 		swaps = new int[20];
+	}
+	
+	private static class Pages {
+		public int pid;
+		public int pages;
+		Pages(int id, int p)
+		{
+			pid=id;
+			pages=p;
+		}
 	}
 }
