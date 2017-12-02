@@ -121,8 +121,8 @@ public class Scheduler {
 	//How long a process runs for
 	private int getTimeSlice( Process process ){
 
-		double nice = getNiceValue( process );
-		double totalNice = getTotalNice();
+		double nice = getNiceValue( process );	
+		double totalNice = getTotalNice();		
 
 		double slice = getPeriod() * ( nice / totalNice );
 
@@ -135,23 +135,9 @@ public class Scheduler {
 		return minGranularity * schedulingQueue.size();
 	}
 
-	//Returns normalized runtime used in sorting schedulingQueue red/black tree
+	//Returns runtime used in sorting schedulingQueue red/black tree
 	private double getVirtualRuntime( Process process ){
-
-		//Largest value in r/b is item with longest runtime
-
-		//		double largestRuntime = schedulingQueue.last().virtualRuntime;
-		//		
-		//		//Avoid infinity
-		//		if( largestRuntime == 0 ){
-		//			return 0;
-		//		}
-		//		
-		//		double virtualRuntime = ( (double) process.getRuntime() / (double) largestRuntime  );
-
 		return process.getRuntime();
-
-		//return virtualRuntime;
 	}
 
 
